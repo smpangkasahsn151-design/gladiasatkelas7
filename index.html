@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASAT Kelas 7 - SMP Angkasa Husein</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* PALET WARNA BARU: CERAH, CERIA & SEGAR */
+            --bg-light: #e0f2fe;    /* Latar belakang biru langit sangat cerah */
+            --card-bg: #ffffff;     /* Kartu putih bersih */
+            --primary: #0284c7;     /* Biru utama sekolah yang segar */
+            --primary-dark: #0369a1;/* Biru tua aksen */
+            --orange: #ff7a00;      /* Oranye ceria */
+            --orange-hover: #e66e00;/* Oranye gelap untuk hover */
+            --text-main: #0f172a;   /* Teks utama abu-abu gelap (sangat terbaca) */
+            --text-muted: #64748b;  /* Teks redup */
+            --danger: #ef4444;      /* Merah pelanggaran */
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-main);
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            /* Grid halus ceria berwarna biru langit */
+            background-image:
+                linear-gradient(rgba(2, 132, 199, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(2, 132, 199, 0.08) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none; z-index: 0;
+        }
+        #login-card {
+            position: relative; z-index: 10;
+            width: 100%; max-width: 430px; margin: auto;
+            background: var(--card-bg);
+            border: 3px solid var(--primary); 
+            border-radius: 20px; padding: 36px 32px;
+            box-shadow: 0 20px 40px rgba(2, 132, 199, 0.15);
+        }
+        .card-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        .school-badge { text-align: center; margin-bottom: 20px; }
+        .school-name { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+        .school-name span.org { color: var(--primary); }
+        .school-name span.loc { color: var(--orange); }
+        .school-addr { font-size: 10px; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; font-weight: 700; }
+        .divider { height: 2px; background: linear-gradient(90deg, transparent, var(--primary), transparent); margin: 16px 0; }
+        .exam-title { text-align: center; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-main); text-transform: uppercase; margin-bottom: 4px; }
+        .exam-subtitle { text-align: center; font-size: 12px; color: var(--orange); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700; }
+        #live-clock { text-align: center; font-size: 12px; color: var(--primary-dark); margin: 10px 0 4px; letter-spacing: 0.05em; font-weight: 700; }
+        .form-group { margin-top: 16px; }
+        .form-label { font-size: 10px; letter-spacing: 0.1em; color: var(--primary-dark); text-transform: uppercase; margin-bottom: 6px; display: block; font-weight: 700; }
+        select, input[type="password"] {
+            width: 100%; background: #f8fafc;
+            border: 2px solid #cbd5e1; color: var(--text-main);
+            padding: 12px 14px; border-radius: 10px;
+            font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none; font-weight: 700;
+        }
+        select:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        select option { background: #ffffff; color: var(--text-main); }
+        input[type="password"] { text-align: center; letter-spacing: 0.3em; font-size: 16px; border-color: var(--orange); background: #fff7ed; }
+        input[type="password"]::placeholder { letter-spacing: 0.1em; font-size: 12px; color: var(--text-muted); font-weight: 400; }
+        #btn-launch {
+            width: 100%; margin-top: 24px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-hover));
+            color: #ffffff; border: none; padding: 15px; border-radius: 10px;
+            font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+            letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+        }
+        #btn-launch:hover { opacity: 0.95; }
+        #btn-launch:active { transform: scale(0.98); }
+        .copyright { text-align: center; font-size: 10px; color: var(--text-muted); opacity: 0.8; letter-spacing: 0.1em; margin-top: 20px; text-transform: uppercase; font-weight: 700; }
+        
+        /* PANEL UJIAN aktif */
+        #exam-panel { display: none; position: fixed; inset: 0; flex-direction: column; z-index: 500; background: #fff; }
+        #exam-panel.active { display: flex; }
+        .exam-topbar {
+            background: #ffffff; border-bottom: 4px solid var(--primary);
+            padding: 10px 16px; display: flex; align-items: center;
+            justify-content: space-between; gap: 12px; flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .topbar-left { display: flex; align-items: center; gap: 8px; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--orange); animation: pulse 1.5s infinite; }
+        .status-dot.active { background: var(--danger); }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+        .topbar-btn { padding: 8px 16px; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border: 2px solid; transition: opacity 0.2s; }
+        .topbar-btn:hover { opacity: 0.9; }
+        .btn-activate { background: var(--primary); color: #ffffff; border-color: var(--primary-dark); }
+        .btn-sync { background: #16a34a; color: #ffffff; border-color: #166534; display: none; }
+        .viol-counter { background: var(--danger); color: #ffffff; padding: 6px 14px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+        .viol-num { font-size: 18px; line-height: 1; }
+        #iframe-exam { width: 100%; flex: 1; border: none; background: white; }
+        
+        /* OVERLAY BLOKIRAN */
+        #warning-overlay { display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; border: 8px solid var(--danger); color: var(--text-main); }
+        #warning-overlay.show { display: flex; }
+        .warning-icon { font-size: 64px; margin-bottom: 12px; }
+        .warning-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--danger); text-transform: uppercase; margin-bottom: 8px; }
+        .warning-sub { font-size: 14px; color: var(--text-main); max-width: 400px; line-height: 1.6; margin-bottom: 24px; font-weight: 700; }
+        .warning-count { font-size: 64px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--orange); margin-bottom: 4px; }
+        .warning-count-label { font-size: 11px; color: var(--primary-dark); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 28px; font-weight: 700; }
+        .btn-back { background: var(--danger); color: #ffffff; border: none; padding: 14px 40px; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+        
+        #devtools-overlay { display: none; position: fixed; inset: 0; background: var(--bg-light); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; border: 8px solid var(--danger); color: var(--text-main); }
+        #devtools-overlay.show { display: flex; }
+        .dt-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--danger); text-transform: uppercase; margin-bottom: 12px; }
+        .dt-sub { font-size: 13px; max-width: 340px; line-height: 1.7; font-weight: 700; color: var(--text-muted); }
+        @media print { body { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div id="devtools-overlay">
+    <div style="font-size:64px;margin-bottom:16px;">🚫</div>
+    <div class="dt-title">Developer Tools Terdeteksi!</div>
+    <div class="dt-sub">Tutup Developer Tools untuk melanjutkan pengerjaan ujian.</div>
+</div>
+
+<div id="warning-overlay">
+    <div class="warning-icon">⚠️</div>
+    <div class="warning-title">Pelanggaran Terdeteksi!</div>
+    <div class="warning-sub">Dilarang keluar dari halaman ujian, membuka tab baru, atau menggunakan aplikasi pembantu luar.</div>
+    <div class="warning-count" id="warn-count">0</div>
+    <div class="warning-count-label">Total Pelanggaran Anda</div>
+    <button class="btn-back" onclick="closeWarning()">Kembali ke Soal Ujian</button>
+</div>
+
+<div class="card-center" id="login-wrapper">
+    <div id="login-card">
+        <div class="school-badge">
+            <div class="school-name"><span class="org">SMP ANGKASA</span> <span class="loc">HUSEIN</span></div>
+            <div class="school-addr">Jl. Pajajaran No. 151 Bandung</div>
+        </div>
+        <div class="divider"></div>
+        <div class="exam-title">Asesmen Sumatif Akhir Tahun</div>
+        <div class="exam-subtitle">Kelas 7 — Tahun Pelajaran 2025/2026</div>
+        <div id="live-clock">Memuat jam...</div>
+        <div class="divider"></div>
+        <div class="form-group">
+            <label class="form-label">Mata Pelajaran</label>
+            <select id="select-mapel">
+                <option value="">— Pilih Mata Pelajaran —</option>
+                <option value="INDO">B. Indonesia (Selasa, 2 Juni)</option>
+                <option value="PAI">PAPB (Selasa, 2 Juni)</option>
+                <option value="PJOK">Pend. Jasmani & OR (Selasa, 2 Juni)</option>
+                <option value="ING">Bahasa Inggris (Rabu, 3 Juni)</option>
+                <option value="SUNDA">Basa Sunda (Rabu, 3 Juni)</option>
+                <option value="MTK_ABC">Matematika 7 ABC (Kamis, 4 Juni)</option>
+                <option value="MTK_DE">Matematika 7 DE (Kamis, 4 Juni)</option>
+                <option value="PPKN">Pend. Kewarganegaraan (Kamis, 4 Juni)</option>
+                <option value="IPA">Ilmu Pengetahuan Alam (Jumat, 5 Juni)</option>
+                <option value="SBK">Seni Budaya (Jumat, 5 Juni)</option>
+                <option value="IPS">Ilmu Pengetahuan Sosial (Senin, 8 Juni)</option>
+                <option value="TIK">Informatika (Senin, 8 Juni)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Token Harian</label>
+            <input type="password" id="input-pass" placeholder="Masukkan Token" autocomplete="off" spellcheck="false">
+        </div>
+        <button id="btn-launch" onclick="launchExam()">Buka Soal Ujian →</button>
+        <div class="copyright">© SMP Angkasa Husein — Sistem ASAT</div>
+    </div>
+</div>
+
+<div id="exam-panel">
+    <div class="exam-topbar">
+        <div class="topbar-left">
+            <div class="status-dot" id="status-dot"></div>
+            <button id="btn-activate" class="topbar-btn btn-activate" onclick="activateMonitor()">1. Aktifkan Pengawas</button>
+            <button id="btn-sync" class="topbar-btn btn-sync" onclick="syncToGoogle()">2. Kirim Data</button>
+        </div>
+        <div class="viol-counter">PELANGGARAN: <span class="viol-num" id="cheat-count">0</span></div>
+    </div>
+    <iframe id="iframe-exam" src="" sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
+</div>
+
+<script>
+(function() {
+    const _k = 0x5A;
+    function xd(s) {
+        try { const b = atob(s); let r=''; for(let i=0;i<b.length;i++) r+=String.fromCharCode(b.charCodeAt(i)^_k); return r; }
+        catch(e){ return ''; }
+    }
+    function xe(s) {
+        let r=''; for(let i=0;i<s.length;i++) r+=String.fromCharCode(s.charCodeAt(i)^_k); return btoa(r);
+    }
+
+    const _ENC = {
+        "INDO":  xe("2026-05-25|07:00|17:00|GLADI|https://docs.google.com/forms/d/e/1FAIpQLSdLm5qlEEiHDEhEcBLXinFhLbRMFrS9OPcSjm3kuEzYSfJoig/viewform|entry.1532943721"),
+        "PAI":   xe("2026-05-21|07:00|17:00|SELASA7|https://docs.google.com/forms/d/e/1FAIpQL/viewform|entry.450784430"),
+        "PJOK":  xe("2026-06-02|11:20|12:30|SELASA7|https://docs.google.com/forms/d/e/LINK_PJOK/viewform|entry.999999"),
+        "ING":   xe("2026-06-03|07:30|09:00|RABU777|https://docs.google.com/forms/d/e/LINK_ING/viewform|entry.444444"),
+        "SUNDA": xe("2026-06-03|09:30|11:00|RABU777|https://docs.google.com/forms/d/e/LINK_SUNDA/viewform|entry.121212"),
+        
+        /* TEMPAT MEMASUKKAN LINK & ENTRY ID UNTUK MATEMATIKA YANG BERBEDA */
+        "MTK_ABC": xe("2026-06-04|07:30|09:00|KAMIS77|https://docs.google.com/forms/d/e/1FAIpQLSeHctNUHt_bPdSO9v_2mZw/viewform|entry.1333816070"),
+        "MTK_DE":  xe("2026-05-21|07:00|09:00|KAMIS77|https://docs.google.com/forms/d/e/1FAIpQLSf/viewform|entry.437523386"),
+        
+        "PPKN":  xe("2026-06-04|09:30|11:00|KAMIS77|https://docs.google.com/forms/d/e/LINK_PPKN/viewform|entry.222222"),
+        "IPA":   xe("2026-06-05|07:30|09:00|JUMAT77|https://docs.google.com/forms/d/e/LINK_IPA/viewform|entry.333333"),
+        "SBK":   xe("2026-06-05|09:30|11:00|JUMAT77|https://docs.google.com/forms/d/e/1FAIpQLScsHVSBSKr-DVNC/viewform|entry.1339676615"),
+        "IPS":   xe("2026-06-08|07:30|09:00|SENIN77|https://docs.google.com/forms/d/e/LINK_IPS/viewform|entry.666666"),
+        "TIK":   xe("2026-06-08|09:30|11:00|SENIN77|https://docs.google.com/forms/d/e/LINK_TIK/viewform|entry.131313"),
+    };
+
+    function getConfig(id) {
+        if (!_ENC[id]) return null;
+        const p = xd(_ENC[id]).split('|');
+        return { tgl:p[0], mulai:p[1], selesai:p[2], token:p[3], link:p[4], entryId:p[5] };
+    }
+
+    let _violations = 0;
+    let _isActive   = false;
+    let _activeMapel = '';
+    let _lockoutActive = false;
+    let _dtBlocked = false;
+    let _monitorInterval = null;
+    let _dtInterval = null;
+    let _isSubmitting = false;
+
+    // CLOCK
+    setInterval(() => {
+        const el = document.getElementById('live-clock');
+        if (el) el.innerText = new Date().toLocaleString('id-ID', {dateStyle:'long', timeStyle:'medium'});
+    }, 1000);
+
+    // MENDETEKSI JIKA SISWA KLIK MOUSE DI AREA SUBMIT
+    window.addEventListener('blur', () => {
+        setTimeout(() => {
+            if (_isSubmitting) return;
+            const f = document.activeElement;
+            if (_isActive && !_lockoutActive && f && f.id !== 'iframe-exam') {
+                triggerViolation();
+            }
+        }, 200);
+    });
+
+    window.addEventListener('message', (e) => {
+        if(e.data === 'submitting') {
+            _isSubmitting = true;
+        }
+    });
+
+    // KEYBOARD BLOCK
+    document.addEventListener('keydown', function(e) {
+        const blocked =
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && ['i','I','j','J','c','C'].includes(e.key)) ||
+            (e.ctrlKey && ['s','S','u','U','p','P'].includes(e.key)) ||
+            e.key === 'F5' ||
+            (e.ctrlKey && (e.key==='r'||e.key==='R'));
+        if (blocked) {
+            e.preventDefault(); e.stopPropagation();
+            if (_isActive) triggerViolation();
+            return false;
+        }
+    }, true);
+
+    document.addEventListener('copy',       e => { e.preventDefault(); if (_isActive) triggerViolation(); });
+    document.addEventListener('cut',         e => { e.preventDefault(); if (_isActive) triggerViolation(); });
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('dragstart',   e => e.preventDefault());
+    document.addEventListener('selectstart', e => { if (_isActive) e.preventDefault(); });
+    document.addEventListener('keyup', e => {
+        if (e.key === 'PrintScreen') {
+            navigator.clipboard?.writeText('').catch(()=>{});
+            if (_isActive) triggerViolation();
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (_isSubmitting) return;
+        if (_isActive && !_lockoutActive && document.visibilityState === 'hidden') triggerViolation();
+    });
+
+    function requestFS() {
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+        if (req) req.call(el).catch(()=>{});
+    }
+    
+    document.addEventListener('fullscreenchange', () => {
+        if (_isSubmitting) return;
+        if (!document.fullscreenElement && _isActive) { requestFS(); triggerViolation(); }
+    });
+
+    window.launchExam = function() {
+        const mapelID = document.getElementById('select-mapel').value;
+        const tokenInput = document.getElementById('input-pass').value.trim();
+        if (!mapelID) { alert('Pilih mata pelajaran terlebih dahulu!'); return; }
+        const cfg = getConfig(mapelID);
+        if (!cfg) { alert('Konfigurasi tidak ditemukan.'); return; }
+        const now = new Date();
+        if (cfg.tgl) {
+            const t0 = new Date(cfg.tgl+'T'+cfg.mulai+':00');
+            const t1 = new Date(cfg.tgl+'T'+cfg.selesai+':00');
+            if (now < t0) { alert('Ujian belum dimulai!\nJadwal: '+cfg.tgl+' pukul '+cfg.mulai); return; }
+            if (now > t1) { alert('Waktu ujian telah berakhir!'); return; }
+        }
+        if (tokenInput.toUpperCase() !== cfg.token.toUpperCase()) {
+            alert('Token salah! Minta token kepada pengawas.');
+            return;
+        }
+        _activeMapel = mapelID;
+        document.getElementById('login-wrapper').style.display = 'none';
+        document.getElementById('exam-panel').classList.add('active');
+        document.getElementById('iframe-exam').src = cfg.link + '?' + cfg.entryId + '=0';
+        requestFS();
+    };
+
+    window.activateMonitor = function() {
+        _isActive = true;
+        document.getElementById('status-dot').classList.add('active');
+        document.getElementById('btn-activate').style.display = 'none';
+        document.getElementById('btn-sync').style.display = 'inline-block';
+
+        _monitorInterval = setInterval(() => {
+            if (!_isActive || _lockoutActive || _isSubmitting) return;
+            if (document.visibilityState === 'hidden' ||
+                (!document.hasFocus() && document.activeElement && document.activeElement.id !== 'iframe-exam')) {
+                triggerViolation();
+            }
+        }, 400);
+
+        _dtInterval = setInterval(() => {
+            if (!_isActive) return;
+            const isOpen = (window.outerWidth - window.innerWidth) > 200 ||
+                           (window.outerHeight - window.innerHeight) > 200;
+            if (isOpen && !_dtBlocked) {
+                _dtBlocked = true;
+                document.getElementById('devtools-overlay').classList.add('show');
+                triggerViolation();
+            } else if (!isOpen && _dtBlocked) {
+                _dtBlocked = false;
+                document.getElementById('devtools-overlay').classList.remove('show');
+            }
+        }, 1000);
+    };
+
+    function triggerViolation() {
+        if (_lockoutActive || _isSubmitting) return;
+        _lockoutActive = true;
+        _violations++;
+        document.getElementById('cheat-count').innerText = _violations;
+        document.getElementById('warn-count').innerText = _violations;
+        document.getElementById('warning-overlay').classList.add('show');
+        const cfg = getConfig(_activeMapel);
+        if (cfg) document.getElementById('iframe-exam').src = cfg.link + '?' + cfg.entryId + '=' + _violations;
+    }
+
+    window.closeWarning = function() {
+        document.getElementById('warning-overlay').classList.remove('show');
+        _lockoutActive = false;
+        window.focus();
+        requestFS();
+    };
+
+    window.syncToGoogle = function() {
+        if (!confirm('Kirim data pelanggaran akhir?\n\nTotal pelanggaran: ' + _violations)) return;
+        const cfg = getConfig(_activeMapel);
+        if (!cfg) return;
+        _isActive = false;
+        clearInterval(_monitorInterval);
+        clearInterval(_dtInterval);
+        const baseUrl = cfg.link.replace('/viewform', '/formResponse');
+        const hf = document.createElement('form');
+        hf.method='POST'; hf.action=baseUrl; hf.target='_hSync'; hf.style.display='none';
+        const inp = document.createElement('input'); inp.name=cfg.entryId; inp.value=_violations;
+        hf.appendChild(inp);
+        const hIframe = document.createElement('iframe'); hIframe.name='_hSync'; hIframe.style.display='none';
+        document.body.appendChild(hIframe); document.body.appendChild(hf); hf.submit();
+        document.getElementById('exam-panel').innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#e0f2fe;color:#0f172a;text-align:center;padding:32px;font-family:'IBM Plex Mono',monospace; border: 8px solid #16a34a;">
+                <div style="font-size:64px;margin-bottom:16px;">✅</div>
+                <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#16a34a;margin-bottom:8px;text-transform:uppercase;">Ujian Selesai</div>
+                <div style="font-size:14px;color:#0f172a;font-weight:700;">Terima kasih! Data pelanggaran (${_violations}) telah berhasil dikirim ke pengawas.</div>
+                <div style="margin-top:32px;font-size:11px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;">© SMP Angkasa Husein</div>
+            </div>`;
+    };
+
+    window.addEventListener('beforeunload', () => {
+        _isSubmitting = true;
+    });
+})();
+</script>
+</body>
+</html>
